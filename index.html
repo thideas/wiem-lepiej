@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Wiem Lepiej" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <title>Wiem Lepiej — MVP</title>
+  <style>
+    :root{
+      --bg:#0b1020;--panel:#121a2f;--card:#17223d;--line:#2b3a5c;--text:#f8fafc;--muted:#a8b3c7;
+      --accent:#8b5cf6;--accent2:#a78bfa;--good:#34d399;--bad:#fb7185;--warn:#f59e0b;
+      --team1:#22c55e;--team2:#3b82f6;--team3:#f97316;--team4:#a855f7;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#09101f 0%,#0b1020 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    button:disabled{cursor:not-allowed;opacity:.45}
+    .app{width:min(760px,100%);margin:0 auto;padding:18px 14px 40px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    .brand{font-weight:900;letter-spacing:.02em;font-size:20px}.brand span{color:var(--accent2)}
+    .save{font-size:12px;color:var(--muted)}
+    .panel{background:rgba(18,26,47,.96);border:1px solid var(--line);border-radius:22px;padding:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px}
+    .stack{display:grid;gap:14px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid{display:grid;gap:10px}
+    h1,h2,h3,p{margin:0}h1{font-size:clamp(30px,7vw,48px);line-height:1.02}h2{font-size:26px}h3{font-size:18px}
+    .muted{color:var(--muted)}.small{font-size:13px}.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);font-weight:800}
+    .btn{min-height:50px;border-radius:15px;padding:12px 16px;border:1px solid var(--line);background:#17223d;color:var(--text);font-weight:800}
+    .btn:hover{filter:brightness(1.06)}.primary{background:linear-gradient(135deg,var(--accent),#6d28d9);border-color:#9f7aea}.danger{background:#351525;border-color:#7f1d1d}.ghost{background:transparent}.good{background:#0f3b31;border-color:#1f7a62}.bad{background:#3b1620;border-color:#7f1d2d}
+    .chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:#10182b;font-size:12px;font-weight:800}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}.wrap{flex-wrap:wrap}
+    .teamdot{width:11px;height:11px;border-radius:50%;display:inline-block;flex:0 0 auto}.teamrow{display:flex;align-items:center;gap:9px;min-width:0}.teamname{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.score{font-size:20px;font-weight:900}
+    .field label{display:block;margin-bottom:6px;font-size:13px;font-weight:800;color:#dbe4f3}.field input,.field select{width:100%;background:#0f172a;border:1px solid var(--line);color:var(--text);border-radius:14px;padding:13px;font-size:16px;outline:none}.field input:focus,.field select:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(167,139,250,.16)}
+    .hidden{display:none!important}.center{text-align:center}.question{font-size:clamp(28px,7vw,42px);font-weight:900;line-height:1.12;padding:16px 0}.answer{font-size:32px;font-weight:900;text-align:center;padding:12px}.hero{padding:12px 0 4px}.hero p{margin-top:10px;max-width:54ch}
+    .categorybtn,.swapbtn{width:100%;text-align:left}.selected{outline:3px solid rgba(167,139,250,.7);border-color:var(--accent2)}
+    .divider{height:1px;background:var(--line);margin:2px 0}.notice{border:1px dashed #506080;background:#0d1628;border-radius:16px;padding:13px;color:#dbe4f3}.resultbig{font-size:28px;font-weight:900;line-height:1.15}
+    .menu{display:flex;gap:8px;flex-wrap:wrap}.menu .btn{min-height:40px;padding:8px 12px;font-size:13px}.statuspill{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+    .pulse{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px rgba(52,211,153,.12)}
+    @media(max-width:520px){.grid2{grid-template-columns:1fr}.app{padding-left:12px;padding-right:12px}.panel{padding:15px}.question{font-size:30px}.row.mobile-stack{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <div class="topbar">
+      <div class="brand">WIEM <span>LEPIEJ</span></div>
+      <div id="saveStatus" class="save">lokalny zapis</div>
+    </div>
+
+    <section id="home" class="stack">
+      <div class="panel hero stack">
+        <div class="eyebrow">MVP · jeden telefon</div>
+        <h1>Quiz do przekazywania telefonu między drużynami.</h1>
+        <p class="muted">Gra zapisuje się automatycznie na tym urządzeniu. Możesz zamknąć kartę, Safari albo wrócić później.</p>
+        <div id="resumeBox" class="card hidden stack"></div>
+        <div class="grid2">
+          <button id="newGameBtn" class="btn primary" type="button">Nowa gra</button>
+          <button id="resumeBtn" class="btn hidden" type="button">Kontynuuj grę</button>
+        </div>
+        <div class="menu">
+          <button id="historyBtn" class="btn ghost" type="button">Historia</button>
+          <button id="resetSaveBtn" class="btn danger hidden" type="button">Usuń zapis</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="setup" class="stack hidden">
+      <div class="panel stack">
+        <div><div class="eyebrow">Nowa gra</div><h2>Ustaw drużyny</h2></div>
+        <div class="field"><label for="teamCount">Liczba drużyn</label><select id="teamCount"><option value="2">2 drużyny</option><option value="3" selected>3 drużyny</option><option value="4">4 drużyny</option></select></div>
+        <div id="teamInputs" class="grid"></div>
+        <div class="grid2"><button id="setupBack" class="btn ghost" type="button">Wstecz</button><button id="startBtn" class="btn primary" type="button">Rozpocznij</button></div>
+      </div>
+    </section>
+
+    <section id="rank" class="stack hidden">
+      <div class="row wrap"><div><div class="eyebrow">Ustawianie kategorii</div><h2 id="rankTitle"></h2></div><span id="rankStep" class="chip"></span></div>
+      <div class="panel stack"><p class="muted small">Kliknij dwie kategorie, aby zamienić ich wartości 1–4 pkt.</p><div id="rankList" class="grid"></div><button id="rankConfirm" class="btn primary" type="button">Gotowe</button></div>
+    </section>
+
+    <section id="board" class="stack hidden">
+      <div class="panel stack">
+        <div class="row wrap"><div><div id="roundLabel" class="eyebrow"></div><h2 id="turnTitle"></h2></div><span id="tierChip" class="chip"></span></div>
+        <div id="scoreboard" class="grid"></div>
+        <div class="card stack"><div class="eyebrow">Aktualna kategoria</div><div id="currentCategory" style="font-size:24px;font-weight:900"></div><div class="menu"><span id="knowToken" class="chip"></span><span id="swapToken" class="chip"></span></div><div class="grid2"><button id="swapBtn" class="btn" type="button">Użyj Zamiany</button><button id="questionBtn" class="btn primary" type="button">Przejdź do pytania</button></div></div>
+      </div>
+    </section>
+
+    <section id="swap" class="stack hidden">
+      <div><div class="eyebrow">Taktyka</div><h2>Zamiana kategorii</h2></div>
+      <div class="panel stack"><p class="muted small">Wybierz dwie niewykorzystane kategorie. Mogą należeć do dowolnych drużyn.</p><div id="swapList" class="grid"></div><div class="grid2"><button id="swapCancel" class="btn ghost" type="button">Anuluj</button><button id="swapConfirm" class="btn primary" type="button" disabled>Zamień</button></div></div>
+    </section>
+
+    <section id="preq" class="stack hidden">
+      <div class="panel stack"><div><div class="eyebrow">Przed pytaniem</div><h2 id="preqTitle"></h2></div><div id="preqCategory" class="card" style="font-size:20px;font-weight:900"></div><div class="notice">Jeśli ktoś mówi „Wiem lepiej!” jeszcze przed odsłonięciem pytania, wybierz drużynę teraz.</div><div id="preqChallengers" class="grid"></div><button id="showQuestionBtn" class="btn primary" type="button">Pokaż pytanie</button></div>
+    </section>
+
+    <section id="question" class="stack hidden">
+      <div class="panel stack"><div class="row wrap"><span id="qCategory" class="chip"></span><span id="qPoints" class="chip"></span></div><div id="questionText" class="question"></div><div id="challengeStatus" class="muted small"></div><div id="postChallengeWrap" class="stack"><div style="font-weight:800">„Wiem lepiej” po pytaniu</div><div id="postChallengers" class="grid"></div></div><button id="revealBtn" class="btn primary" type="button">Sprawdź odpowiedź</button></div>
+    </section>
+
+    <section id="reveal" class="stack hidden">
+      <div class="panel stack"><div class="eyebrow">Prawidłowa odpowiedź</div><div class="card"><button id="holdAnswer" class="btn ghost" style="width:100%" type="button">Przytrzymaj, aby pokazać</button><div id="answerText" class="answer hidden"></div></div><div id="defenderChoice" class="stack"><div id="defenderLabel" style="font-weight:800"></div><div class="grid2"><button id="defCorrect" class="btn good" type="button">Poprawna</button><button id="defWrong" class="btn bad" type="button">Błędna</button></div></div><div id="challengerChoice" class="stack hidden"><div id="challengerLabel" style="font-weight:800"></div><div class="grid2"><button id="chalCorrect" class="btn good" type="button">Poprawna</button><button id="chalWrong" class="btn bad" type="button">Błędna</button></div></div></div>
+    </section>
+
+    <section id="result" class="stack hidden">
+      <div class="panel stack"><div class="eyebrow">Wynik pytania</div><div id="resultText" class="resultbig"></div><div id="resultScoreboard" class="grid"></div><button id="nextTurn" class="btn primary" type="button">Dalej</button></div>
+    </section>
+
+    <section id="round" class="stack hidden">
+      <div class="panel stack"><div><div class="eyebrow">Koniec rundy</div><h2 id="roundEndTitle"></h2></div><div id="roundScoreboard" class="grid"></div><button id="newRoundBtn" class="btn primary" type="button">Nowa runda</button></div>
+    </section>
+
+    <section id="history" class="stack hidden">
+      <div class="panel stack"><div class="row wrap"><div><div class="eyebrow">Lokalnie na urządzeniu</div><h2>Historia gier</h2></div><button id="historyBack" class="btn ghost" type="button">Wstecz</button></div><div id="historyList" class="grid"></div></div>
+    </section>
+  </main>
+
+<script>
+(() => {
+  const SAVE_KEY = 'wiem-lepiej-active-v2';
+  const HISTORY_KEY = 'wiem-lepiej-history-v1';
+  const VERSION = 2;
+  const teamColors = ['var(--team1)','var(--team2)','var(--team3)','var(--team4)'];
+
+  const categories = ["Nauka","Polityka","Projektowanie","Sztuka i teatr","Świat biznesu","Natura","Telewizja i seriale","Potrawy i napoje","Społeczeństwo","Sport","Film","Geografia","Historia","Języki","Literatura","Tradycje i wierzenia","Architektura","Muzyka","Technologia i gry","Człowiek"];
+  const bank = {
+    "Nauka":[["Jak nazywa się najmniejsza jednostka pierwiastka zachowująca jego właściwości chemiczne?","Atom"],["Która planeta Układu Słonecznego ma największą masę?","Jowisz"],["Jaki gaz stanowi największą część ziemskiej atmosfery?","Azot"]],
+    "Polityka":[["Jak nazywa się izba niższa polskiego parlamentu?","Sejm"],["Ile lat trwa kadencja Prezydenta RP?","5 lat"],["Jak nazywa się podstawowy akt prawny państwa określający jego ustrój?","Konstytucja"]],
+    "Projektowanie":[["Jak nazywa się krój pisma bez szeryfów?","Bezszeryfowy / sans-serif"],["Jak nazywa się uproszczony szkic układu interfejsu?","Wireframe"],["Jak nazywa się znak graficzny identyfikujący markę lub firmę?","Logo"]],
+    "Sztuka i teatr":[["Kto namalował obraz „Guernica”?","Pablo Picasso"],["Jak nazywa się przerwa między aktami przedstawienia?","Antrakt"],["Kto namalował „Mona Lisę”?","Leonardo da Vinci"]],
+    "Świat biznesu":[["Co oznacza skrót EBITDA?","Zysk przed odsetkami, podatkami i amortyzacją"],["Jak nazywa się rynek, na którym sprzedaje się akcje po raz pierwszy?","Rynek pierwotny"],["Jak nazywa się przejęcie jednej firmy przez inną?","Akwizycja / przejęcie"]],
+    "Natura":[["Jakie zwierzę jest największym współcześnie żyjącym ssakiem?","Płetwal błękitny"],["Jak nazywa się proces, w którym rośliny wykorzystują światło do wytwarzania energii?","Fotosynteza"],["Jakie drzewo produkuje żołędzie?","Dąb"]],
+    "Telewizja i seriale":[["Jak nazywa się fikcyjny kontynent, na którym leży Królewska Przystań w „Grze o tron”?","Westeros"],["Jak ma na imię główny bohater serialu „Breaking Bad”?","Walter White"],["Jak nazywa się kawiarnia z serialu „Przyjaciele”?","Central Perk"]],
+    "Potrawy i napoje":[["Z jakiego kraju pochodzi paella?","Hiszpania"],["Jaki alkohol jest podstawą klasycznego mojito?","Rum"],["Z jakiego kraju pochodzi sushi?","Japonia"]],
+    "Społeczeństwo":[["Jak nazywa się spis ludności przeprowadzany przez państwo?","Spis powszechny"],["Jak nazywa się nauka badająca strukturę i funkcjonowanie społeczeństwa?","Socjologia"],["Jak nazywa się ogół mieszkańców danego państwa lub obszaru?","Ludność / populacja"]],
+    "Sport":[["Ilu zawodników jednej drużyny przebywa jednocześnie na boisku w piłce nożnej?","11"],["Jak nazywa się turniej tenisowy rozgrywany na kortach trawiastych w Londynie?","Wimbledon"],["Ile punktów daje rzut zza linii 6,75 m w koszykówce FIBA?","3"]],
+    "Film":[["Kto wyreżyserował film „Titanic”?","James Cameron"],["Jak nazywa się nagroda Amerykańskiej Akademii Filmowej?","Oscar"],["Kto zagrał Forresta Gumpa w filmie o tym samym tytule?","Tom Hanks"]],
+    "Geografia":[["Jakie państwo ma największą powierzchnię na świecie?","Rosja"],["Jak nazywa się największa wyspa Morza Śródziemnego?","Sycylia"],["Jaka jest stolica Australii?","Canberra"]],
+    "Historia":[["W którym roku zakończyła się II wojna światowa w Europie?","1945"],["Kto był pierwszym królem Polski?","Bolesław Chrobry"],["W którym roku Polska wstąpiła do Unii Europejskiej?","2004"]],
+    "Języki":[["Jak nazywa się wyraz o przeciwnym znaczeniu do innego wyrazu?","Antonim"],["Jak nazywa się wyraz o podobnym znaczeniu do innego wyrazu?","Synonim"],["Jak po angielsku jest „środa”?","Wednesday"]],
+    "Literatura":[["Kto napisał „Lalkę”?","Bolesław Prus"],["Jak nazywa się autor „1984”?","George Orwell"],["Kto napisał cykl o Harrym Potterze?","J.K. Rowling"]],
+    "Tradycje i wierzenia":[["Jak nazywa się żydowski dzień odpoczynku trwający od piątku wieczorem do soboty wieczorem?","Szabat"],["Jak nazywa się miesiąc postu w islamie?","Ramadan"],["Jak nazywa się chrześcijańskie święto upamiętniające zmartwychwstanie Jezusa?","Wielkanoc"]],
+    "Architektura":[["Jak nazywa się styl architektoniczny kojarzony z ostrołukami i witrażami?","Gotyk"],["Jak nazywa się poziomy element konstrukcyjny oparty na podporach?","Belka"],["Jak nazywa się wysoka, smukła wieża charakterystyczna dla części meczetów?","Minaret"]],
+    "Muzyka":[["Ile klawiszy ma standardowy fortepian?","88"],["Jak nazywa się najwyższy kobiecy głos?","Sopran"],["Ile strun ma standardowa gitara?","6"]],
+    "Technologia i gry":[["Co oznacza skrót CPU?","Central Processing Unit / procesor"],["Jak nazywa się firma, która stworzyła konsolę PlayStation?","Sony"],["Jak nazywa się system operacyjny Apple dla iPhone'a?","iOS"]],
+    "Człowiek":[["Jaki narząd pompuje krew w organizmie człowieka?","Serce"],["Ile chromosomów ma typowa ludzka komórka somatyczna?","46"],["Jak nazywa się największy organ ludzkiego ciała?","Skóra"]]
+  };
+
+  const defaults = () => ({
+    version: VERSION, active: false, screen: 'home', teams: [], round: 1, tier: 1, turnIndex: 0,
+    rankingTeamIndex: 0, rankSelected: null, currentQuestion: null, challenge: null,
+    defenderCorrect: null, revealStage: 'defender', lastResult: '', swapSelections: [], usedQuestionIds: [], createdAt: null, updatedAt: null
+  });
+  let state = defaults();
+  const $ = id => document.getElementById(id);
+  const screens = ['home','setup','rank','board','swap','preq','question','reveal','result','round','history'];
+  const esc = s => String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  const shuffle = arr => {const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const currentTeam = () => state.teams[state.turnIndex];
+  const currentSlot = () => currentTeam()?.slots.find(s=>s.value===state.tier);
+
+  function show(name, doPersist=true){
+    state.screen = name;
+    screens.forEach(s => $(s).classList.toggle('hidden', s!==name));
+    if(doPersist) persist();
+  }
+
+  function persist(){
+    if(!state.active) return;
+    state.updatedAt = new Date().toISOString();
+    try{
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+      flashSaved();
+    }catch(e){ $('saveStatus').textContent='nie udało się zapisać'; }
+  }
+
+  let saveTimer;
+  function flashSaved(){
+    $('saveStatus').innerHTML='<span class="statuspill"><span class="pulse"></span> zapisano</span>';
+    clearTimeout(saveTimer);
+    saveTimer=setTimeout(()=>{$('saveStatus').textContent='autosave lokalny';},1200);
+  }
+
+  function loadSaved(){
+    try{
+      const raw=localStorage.getItem(SAVE_KEY);
+      if(!raw) return null;
+      const parsed=JSON.parse(raw);
+      if(!parsed || parsed.version!==VERSION || !parsed.active) return null;
+      return parsed;
+    }catch(e){return null;}
+  }
+
+  function history(){
+    try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');}catch(e){return [];}
+  }
+  function saveHistoryEntry(){
+    const h=history();
+    h.unshift({date:new Date().toISOString(),round:state.round,teams:state.teams.map(t=>({name:t.name,score:t.score}))});
+    localStorage.setItem(HISTORY_KEY,JSON.stringify(h.slice(0,20)));
+  }
+
+  function renderHome(){
+    state.active=false;
+    state.screen='home';
+    screens.forEach(s=>$(s).classList.toggle('hidden',s!=='home'));
+    const saved=loadSaved();
+    $('resumeBtn').classList.toggle('hidden',!saved);
+    $('resetSaveBtn').classList.toggle('hidden',!saved);
+    $('resumeBox').classList.toggle('hidden',!saved);
+    if(saved){
+      const leader=[...saved.teams].sort((a,b)=>b.score-a.score)[0];
+      $('resumeBox').innerHTML=`<div class="row wrap"><div><div class="eyebrow">Zapisana gra</div><h3>Runda ${saved.round} · pytania za ${saved.tier} pkt</h3></div><span class="chip">${saved.teams.length} drużyny</span></div><div class="muted small">Prowadzi: <strong style="color:var(--text)">${esc(leader?.name||'—')}</strong> · ${leader?.score??0} pkt</div>`;
+    }
+  }
+
+  function renderTeamInputs(){
+    const n=Number($('teamCount').value);const names=['Zieloni','Niebiescy','Pomarańczowi','Fioletowi'];
+    $('teamInputs').innerHTML=Array.from({length:n},(_,i)=>`<div class="field"><label for="team${i}">Drużyna ${i+1}</label><input id="team${i}" value="${names[i]}"></div>`).join('');
+  }
+
+  function startGame(){
+    const existing=loadSaved();
+    if(existing && !confirm('Masz zapisaną aktywną rozgrywkę. Rozpoczęcie nowej gry nadpisze ten zapis. Kontynuować?')) return;
+    const n=Number($('teamCount').value);
+    state=defaults();state.active=true;state.createdAt=new Date().toISOString();
+    state.teams=Array.from({length:n},(_,i)=>({name:($('team'+i).value||`Drużyna ${i+1}`).trim().slice(0,30),score:0,know:2,swap:1,slots:[]}));
+    assignCategories();renderRank();persist();
+  }
+
+  function assignCategories(){
+    const pool=shuffle(categories);let idx=0;
+    state.teams.forEach(t=>{t.slots=[1,2,3,4].map(v=>({category:pool[idx++%pool.length],value:v,used:false}));});
+  }
+
+  function teamRow(t,i){
+    return `<div class="card row"><div class="teamrow"><span class="teamdot" style="background:${teamColors[i]}"></span><span class="teamname">${esc(t.name)}</span></div><div class="score">${t.score}</div></div>`;
+  }
+
+  function renderRank(){
+    show('rank',false);const i=state.rankingTeamIndex,t=state.teams[i];$('rankTitle').textContent=t.name;$('rankStep').textContent=`${i+1}/${state.teams.length}`;
+    $('rankList').innerHTML=t.slots.slice().sort((a,b)=>a.value-b.value).map(s=>`<button type="button" class="btn categorybtn ${state.rankSelected===s.value?'selected':''}" data-rank="${s.value}"><span>${esc(s.category)}</span><span class="chip" style="float:right">${s.value} pkt</span></button>`).join('');
+    $('rankList').querySelectorAll('[data-rank]').forEach(btn=>btn.addEventListener('click',()=>{
+      const v=Number(btn.dataset.rank);if(state.rankSelected===null){state.rankSelected=v;}else if(state.rankSelected===v){state.rankSelected=null;}else{const a=t.slots.find(s=>s.value===state.rankSelected),b=t.slots.find(s=>s.value===v);[a.value,b.value]=[b.value,a.value];state.rankSelected=null;}renderRank();persist();
+    }));persist();
+  }
+
+  function confirmRank(){if(state.rankingTeamIndex<state.teams.length-1){state.rankingTeamIndex++;state.rankSelected=null;renderRank();}else{state.rankingTeamIndex=0;state.rankSelected=null;renderBoard();}}
+
+  function renderBoard(){
+    show('board',false);const t=currentTeam(),slot=currentSlot();$('roundLabel').textContent=`Runda ${state.round}`;$('turnTitle').textContent=`Teraz: ${t.name}`;$('tierChip').textContent=`${state.tier} pkt`;$('scoreboard').innerHTML=state.teams.map(teamRow).join('');$('currentCategory').textContent=slot.category;$('knowToken').textContent=`Wiem lepiej ${t.know}/2`;$('swapToken').textContent=`Zamiana ${t.swap}/1`;$('swapBtn').disabled=t.swap<=0||availableSwapCount()<2;persist();
+  }
+  function availableSwapCount(){return state.teams.flatMap((t,ti)=>t.slots.filter(s=>!s.used).map(s=>({ti,s}))).length;}
+
+  function openSwap(){state.swapSelections=[];show('swap',false);renderSwapList();persist();}
+  function renderSwapList(){
+    const items=[];state.teams.forEach((t,ti)=>t.slots.filter(s=>!s.used).forEach(s=>{const key=ti+':'+s.value;items.push(`<button type="button" data-swapkey="${key}" class="btn swapbtn ${state.swapSelections.includes(key)?'selected':''}"><strong>${esc(t.name)}</strong><span class="muted"> · ${esc(s.category)}</span><span class="chip" style="float:right">${s.value} pkt</span></button>`);}));
+    $('swapList').innerHTML=items.join('');$('swapConfirm').disabled=state.swapSelections.length!==2;$('swapList').querySelectorAll('[data-swapkey]').forEach(btn=>btn.addEventListener('click',()=>{const k=btn.dataset.swapkey;const ix=state.swapSelections.indexOf(k);if(ix>=0)state.swapSelections.splice(ix,1);else if(state.swapSelections.length<2)state.swapSelections.push(k);renderSwapList();persist();}));
+  }
+  function confirmSwap(){if(state.swapSelections.length!==2)return;const p=k=>k.split(':').map(Number);const[aTi,aVal]=p(state.swapSelections[0]),[bTi,bVal]=p(state.swapSelections[1]);const a=state.teams[aTi].slots.find(s=>s.value===aVal),b=state.teams[bTi].slots.find(s=>s.value===bVal);if(!a||!b||a.used||b.used)return;[a.category,b.category]=[b.category,a.category];currentTeam().swap--;if(state.challenge&&state.challenge.timing==='before'){state.teams[state.challenge.teamIndex].know++;state.challenge=null;}renderBoard();}
+
+  function openPreQuestion(){state.challenge=null;show('preq',false);const t=currentTeam(),slot=currentSlot();$('preqTitle').textContent=`Pytanie dla: ${t.name}`;$('preqCategory').textContent=`${slot.category} · ${state.tier} pkt`;renderPreChallengers();persist();}
+  function renderPreChallengers(){
+    const possible=state.teams.map((t,i)=>({t,i})).filter(x=>x.i!==state.turnIndex&&x.t.know>0);let html='';if(state.challenge){const c=state.teams[state.challenge.teamIndex];html+=`<div class="notice"><strong>${esc(c.name)}</strong> zgłosił „Wiem lepiej” przed pytaniem.</div>`;}
+    html+=possible.length?possible.map(({t,i})=>`<button type="button" class="btn" data-prechal="${i}">${esc(t.name)} · zostało ${t.know}/2</button>`).join(''):`<div class="muted small">Nikt nie ma dostępnego żetonu.</div>`;$('preqChallengers').innerHTML=html;$('preqChallengers').querySelectorAll('[data-prechal]').forEach(btn=>btn.addEventListener('click',()=>{const i=Number(btn.dataset.prechal);if(state.challenge)state.teams[state.challenge.teamIndex].know++;state.teams[i].know--;state.challenge={teamIndex:i,timing:'before'};renderPreChallengers();persist();}));
+  }
+
+  function randomQuestion(cat){
+    const qs=bank[cat];const candidates=qs.map((q,i)=>({id:cat+'::'+i,q})).filter(x=>!state.usedQuestionIds.includes(x.id));const pick=(candidates.length?candidates:qs.map((q,i)=>({id:cat+'::'+i,q})))[Math.floor(Math.random()*(candidates.length||qs.length))];if(!state.usedQuestionIds.includes(pick.id))state.usedQuestionIds.push(pick.id);return {id:pick.id,category:cat,question:pick.q[0],answer:pick.q[1]};
+  }
+  function showQuestion(){if(!state.currentQuestion)state.currentQuestion=randomQuestion(currentSlot().category);show('question',false);renderQuestion();persist();}
+  function renderQuestion(){const q=state.currentQuestion;$('qCategory').textContent=q.category;$('qPoints').textContent=`${state.tier} pkt`;$('questionText').textContent=q.question;renderChallengeArea();}
+  function renderChallengeArea(){
+    if(state.challenge){const ch=state.teams[state.challenge.teamIndex];$('challengeStatus').textContent=`„Wiem lepiej”: ${ch.name} · ${state.challenge.timing==='before'?'przed pytaniem (+3 / -1)':'po pytaniu (+1 / -1)'}`;$('postChallengeWrap').classList.add('hidden');}
+    else{$('challengeStatus').textContent='Brak zgłoszonego „Wiem lepiej”.';const possible=state.teams.map((t,i)=>({t,i})).filter(x=>x.i!==state.turnIndex&&x.t.know>0);$('postChallengeWrap').classList.toggle('hidden',possible.length===0);$('postChallengers').innerHTML=possible.map(({t,i})=>`<button type="button" class="btn" data-postchal="${i}">${esc(t.name)} · zostało ${t.know}/2</button>`).join('');$('postChallengers').querySelectorAll('[data-postchal]').forEach(btn=>btn.addEventListener('click',()=>{const i=Number(btn.dataset.postchal);state.teams[i].know--;state.challenge={teamIndex:i,timing:'after'};renderChallengeArea();persist();}));}
+  }
+
+  function openReveal(){state.revealStage='defender';state.defenderCorrect=null;renderReveal();}
+  function renderReveal(){show('reveal',false);$('answerText').textContent=state.currentQuestion.answer;$('answerText').classList.add('hidden');$('holdAnswer').classList.remove('hidden');$('defenderLabel').textContent=`Czy odpowiedź drużyny ${currentTeam().name} była poprawna?`;const challengerStage=state.revealStage==='challenger'&&state.challenge;$('defenderChoice').classList.toggle('hidden',!!challengerStage);$('challengerChoice').classList.toggle('hidden',!challengerStage);if(challengerStage)$('challengerLabel').textContent=`Teraz odpowiada ${state.teams[state.challenge.teamIndex].name}. Czy odpowiedź była poprawna?`;persist();}
+  function setAnswerVisibility(v){$('answerText').classList.toggle('hidden',!v);$('holdAnswer').classList.toggle('hidden',v);}
+  function defenderAnswer(correct){state.defenderCorrect=correct;if(correct){currentTeam().score+=state.tier;finishQuestion(`${currentTeam().name}: +${state.tier} pkt`);}else if(state.challenge){state.revealStage='challenger';renderReveal();}else finishQuestion(`${currentTeam().name}: 0 pkt`);}
+  function challengerAnswer(correct){const ch=state.teams[state.challenge.teamIndex],gain=state.challenge.timing==='before'?3:1;if(correct){ch.score+=gain;finishQuestion(`${currentTeam().name}: 0 pkt · ${ch.name}: +${gain} pkt`);}else{ch.score-=1;finishQuestion(`${currentTeam().name}: 0 pkt · ${ch.name}: -1 pkt`);}}
+  function finishQuestion(text){currentSlot().used=true;state.lastResult=text;show('result',false);$('resultText').textContent=text;$('resultScoreboard').innerHTML=state.teams.map(teamRow).join('');persist();}
+  function advance(){state.challenge=null;state.currentQuestion=null;state.defenderCorrect=null;state.revealStage='defender';if(state.turnIndex<state.teams.length-1){state.turnIndex++;renderBoard();return;}state.turnIndex=0;if(state.tier<4){state.tier++;renderBoard();return;}showRoundEnd();}
+  function showRoundEnd(){show('round',false);$('roundEndTitle').textContent=`Runda ${state.round}`;$('roundScoreboard').innerHTML=[...state.teams].sort((a,b)=>b.score-a.score).map(t=>teamRow(t,state.teams.indexOf(t))).join('');persist();}
+  function newRound(){state.round++;state.tier=1;state.turnIndex=0;state.rankingTeamIndex=0;state.rankSelected=null;state.currentQuestion=null;state.challenge=null;state.swapSelections=[];state.teams.forEach(t=>{t.know=2;t.swap=1;});assignCategories();renderRank();}
+
+  function resumeGame(){const saved=loadSaved();if(!saved)return renderHome();state=saved;restoreScreen();}
+  function restoreScreen(){
+    switch(state.screen){case'rank':renderRank();break;case'board':renderBoard();break;case'swap':show('swap',false);renderSwapList();persist();break;case'preq':show('preq',false);$('preqTitle').textContent=`Pytanie dla: ${currentTeam().name}`;$('preqCategory').textContent=`${currentSlot().category} · ${state.tier} pkt`;renderPreChallengers();persist();break;case'question':show('question',false);renderQuestion();persist();break;case'reveal':renderReveal();break;case'result':show('result',false);$('resultText').textContent=state.lastResult;$('resultScoreboard').innerHTML=state.teams.map(teamRow).join('');persist();break;case'round':showRoundEnd();break;default:renderBoard();}
+  }
+  function deleteSave(){if(confirm('Usunąć zapisaną rozgrywkę z tego urządzenia?')){localStorage.removeItem(SAVE_KEY);renderHome();}}
+  function renderHistory(){show('history',false);const h=history();$('historyList').innerHTML=h.length?h.map(g=>`<div class="card stack"><div class="row wrap"><strong>${new Date(g.date).toLocaleString('pl-PL')}</strong><span class="chip">runda ${g.round}</span></div>${g.teams.slice().sort((a,b)=>b.score-a.score).map((t,i)=>`<div class="row"><span>${i===0?'🏆 ':''}${esc(t.name)}</span><strong>${t.score} pkt</strong></div>`).join('')}</div>`).join(''):'<div class="muted">Brak zapisanych zakończonych gier.</div>';}
+
+  $('teamCount').addEventListener('change',renderTeamInputs);$('newGameBtn').addEventListener('click',()=>{show('setup',false);renderTeamInputs();});$('resumeBtn').addEventListener('click',resumeGame);$('setupBack').addEventListener('click',renderHome);$('startBtn').addEventListener('click',startGame);$('rankConfirm').addEventListener('click',confirmRank);$('swapBtn').addEventListener('click',openSwap);$('questionBtn').addEventListener('click',openPreQuestion);$('swapCancel').addEventListener('click',renderBoard);$('swapConfirm').addEventListener('click',confirmSwap);$('showQuestionBtn').addEventListener('click',showQuestion);$('revealBtn').addEventListener('click',openReveal);$('defCorrect').addEventListener('click',()=>defenderAnswer(true));$('defWrong').addEventListener('click',()=>defenderAnswer(false));$('chalCorrect').addEventListener('click',()=>challengerAnswer(true));$('chalWrong').addEventListener('click',()=>challengerAnswer(false));$('nextTurn').addEventListener('click',advance);$('newRoundBtn').addEventListener('click',newRound);$('resetSaveBtn').addEventListener('click',deleteSave);$('historyBtn').addEventListener('click',renderHistory);$('historyBack').addEventListener('click',renderHome);
+  const hold=$('holdAnswer');['pointerdown','mousedown','touchstart'].forEach(ev=>hold.addEventListener(ev,e=>{e.preventDefault();setAnswerVisibility(true);}));['pointerup','pointercancel','mouseleave','touchend'].forEach(ev=>hold.addEventListener(ev,e=>{e.preventDefault();setAnswerVisibility(false);}));
+  window.addEventListener('beforeunload',persist);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')persist();});
+
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  renderTeamInputs();renderHome();
+})();
+</script>
+</body>
+</html>
